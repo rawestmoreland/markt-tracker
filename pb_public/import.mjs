@@ -23,11 +23,18 @@ const markets = JSON.parse(
   await readFile(new URL('./markets.json', import.meta.url)),
 );
 
+const headers = { 'Content-Type': 'application/json', Authorization: auth.token };
+
 for (const m of markets) {
-  const res = await fetch(`${PB_URL}/api/collections/markets/records`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: auth.token },
-    body: JSON.stringify(m),
-  });
+  // upsert by slug so re-running adds new fields (e.g. *_de) to existing records
+  const found = await fetch(
+    `${PB_URL}/api/collections/markets/records?perPage=1&filter=${encodeURIComponent(`slug="${m.slug}"`)}`,
+    { headers },
+  ).then((r) => r.json());
+  const existing = found.items?.[0];
+  const res = await fetch(
+    `${PB_URL}/api/collections/markets/records${existing ? `/${existing.id}` : ''}`,
+    { method: existing ? 'PATCH' : 'POST', headers, body: JSON.stringify(m) },
+  );
   console.log(res.ok ? 'OK  ' : 'FAIL', m.slug, res.ok ? '' : await res.text());
 }

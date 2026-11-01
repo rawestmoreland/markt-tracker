@@ -8,8 +8,6 @@
       "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --color-slate-100: oklch(96.8% 0.007 247.896);
-    --spacing: 0.25rem;
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
   }
@@ -169,6 +167,9 @@
   .hidden {
     display: none;
   }
+  .transform {
+    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
   .resize {
     resize: both;
   }
@@ -234,23 +235,6 @@ html, body {
   background: radial-gradient(circle at 15% 0%, rgb(255 255 255 / 0.14) 0 6px, transparent 7px) 0 0 / 38px 38px, linear-gradient(160deg, var(--pine) 0%, var(--pine-deep) 100%);
   color: var(--cream);
 }
-.garland {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  margin: -4px 4px 4px;
-  filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.2));
-}
-.garland span {
-  display: inline-block;
-  animation: bob 2.6s ease-in-out infinite;
-}
-.garland span:nth-child(2n) {
-  animation-delay: -1.3s;
-}
-.garland span:nth-child(3) {
-  animation-delay: -0.6s;
-}
 h1 {
   font-family: 'Fraunces', serif;
   font-weight: 800;
@@ -288,6 +272,28 @@ h1 em {
   font-size: 14px;
   color: var(--ink);
   min-width: 0;
+}
+.lang {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin: -6px 0 6px;
+}
+.lang button {
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 2px solid rgb(255 255 255 / 0.35);
+  background: transparent;
+  color: var(--cream);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.lang button[aria-pressed='true'] {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--pine-deep);
 }
 .chips {
   display: flex;
@@ -493,6 +499,9 @@ h1 em {
   top: 8px;
   right: 8px;
 }
+.grab {
+  display: none;
+}
 #toggle {
   display: none;
   position: fixed;
@@ -522,16 +531,29 @@ h1 em {
   #panel.hidden {
     transform: translateY(calc(100% + 24px));
   }
+  #panel.dragging {
+    transition: none;
+  }
+  .grab {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 8px;
+    background: var(--pine);
+    touch-action: none;
+    cursor: grab;
+  }
+  .grab span {
+    width: 44px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.5);
+  }
   #toggle {
+    touch-action: none;
     display: block;
   }
   .leaflet-control-zoom {
     display: none;
-  }
-}
-@keyframes bob {
-  50% {
-    transform: translateY(-4px) rotate(6deg);
   }
 }
 @keyframes pop {
@@ -548,6 +570,26 @@ h1 em {
   #snow {
     display: none;
   }
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
 }
 @property --tw-blur {
   syntax: "*";
@@ -605,6 +647,11 @@ h1 em {
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
       --tw-blur: initial;
       --tw-brightness: initial;
       --tw-contrast: initial;

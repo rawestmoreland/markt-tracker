@@ -9,9 +9,11 @@ const esc = (s) =>
       ],
   );
 
+const { t, field } = window.i18n;
+
 const fmtDate = (d) =>
   d
-    ? new Date(d.replace(' ', 'T')).toLocaleDateString('en-GB', {
+    ? new Date(d.replace(' ', 'T')).toLocaleDateString(i18n.locale(), {
         day: 'numeric',
         month: 'short',
       })
@@ -23,16 +25,16 @@ function status(m, now = new Date()) {
   const opens = m.opens && new Date(m.opens.replace(' ', 'T'));
   const closes = m.closes && new Date(m.closes.replace(' ', 'T'));
   if (closes && now > new Date(+closes + DAY)) {
-    return { key: 'closed', label: 'Season over' };
+    return { key: 'closed', label: t('statusClosed') };
   }
   if (opens && now < opens) {
     const days = Math.ceil((opens - now) / DAY);
     return {
       key: 'soon',
-      label: days === 1 ? 'Opens tomorrow!' : `Opens in ${days} days`,
+      label: days === 1 ? t('statusTomorrow') : t('statusSoon', { days }),
     };
   }
-  return { key: 'open', label: 'Open now' };
+  return { key: 'open', label: t('statusOpen') };
 }
 
 async function fetchAllMarkets() {
@@ -65,14 +67,14 @@ function popupHtml(m, st) {
       ? `<div class="row">📅 <span>${esc(fmtDate(m.opens))} – ${esc(fmtDate(m.closes))}</span></div>`
       : '';
   const site = /^https?:\/\//.test(m.website ?? '')
-    ? `<a class="btn" href="${esc(m.website)}" target="_blank" rel="noopener">Visit website →</a>`
+    ? `<a class="btn" href="${esc(m.website)}" target="_blank" rel="noopener">${esc(t('visitWebsite'))}</a>`
     : '';
   return `
     <div class="popup-head"><h3>${esc(m.name)}</h3></div>
     <div class="popup-body">
-      ${m.description ? `<p>${esc(m.description)}</p>` : ''}
+      ${field(m, 'description') ? `<p>${esc(field(m, 'description'))}</p>` : ''}
       ${m.address ? `<div class="row">📍 <span>${esc(m.address)}</span></div>` : ''}
-      ${m.hours ? `<div class="row">🕒 <span>${esc(m.hours)}</span></div>` : ''}
+      ${field(m, 'hours') ? `<div class="row">🕒 <span>${esc(field(m, 'hours'))}</span></div>` : ''}
       ${dates}
       <div class="row"><span class="badge ${st.key}">${esc(st.label)}</span></div>
       ${site}
@@ -131,13 +133,12 @@ function startSnow() {
     markets = await fetchAllMarkets();
   } catch (err) {
     console.error(err);
-    list.innerHTML = `<li class="empty"><b>🥶</b>Couldn't load the markets. Is the server running?</li>`;
+    list.innerHTML = `<li class="empty"><b>🥶</b>${esc(t('loadError'))}</li>`;
     return;
   }
 
-  const now = new Date();
   const entries = markets.map((m) => {
-    const st = status(m, now);
+    const st = status(m);
     const hasPos = m.lat && m.lng;
     let marker = null;
     if (hasPos) {
@@ -161,7 +162,7 @@ function startSnow() {
     if (state.openOnly && st.key === 'closed') return false;
     const q = state.q.trim().toLowerCase();
     if (!q) return true;
-    return [m.name, m.address, m.description, m.region]
+    return [m.name, m.address, field(m, 'description'), m.region]
       .join(' ')
       .toLowerCase()
       .includes(q);
@@ -202,12 +203,13 @@ function startSnow() {
       }
     });
 
-    $('count').textContent =
-      `${shown.length} ${shown.length === 1 ? 'market' : 'markets'} to explore`;
+    $('count').textContent = t(shown.length === 1 ? 'countOne' : 'countMany', {
+      n: shown.length,
+    });
 
     list.innerHTML = shown.length
       ? ''
-      : `<li class="empty"><b>🔎</b>No markets match. Try another search!</li>`;
+      : `<li class="empty"><b>🔎</b>${esc(t('noMatch'))}</li>`;
 
     shown.forEach(({ m, st }, i) => {
       const li = document.createElement('li');
@@ -240,14 +242,14 @@ function startSnow() {
   // filter chips: "All", each region, and an "open" toggle
   const regions = [...new Set(markets.map((m) => m.region).filter(Boolean))];
   const chipDefs = [
-    { label: '✨ All', test: () => state.region === 'All' && !state.openOnly,
+    { label: () => t('all'), test: () => state.region === 'All' && !state.openOnly,
       apply: () => ((state.region = 'All'), (state.openOnly = false)) },
     ...regions.map((r) => ({
-      label: r,
+      label: () => r,
       test: () => state.region === r,
       apply: () => (state.region = state.region === r ? 'All' : r),
     })),
-    { label: '🟢 Not over yet', test: () => state.openOnly,
+    { label: () => t('notOver'), test: () => state.openOnly,
       apply: () => (state.openOnly = !state.openOnly) },
   ];
   const chipBox = $('filters');
@@ -256,7 +258,7 @@ function startSnow() {
     chipDefs.forEach((c) => {
       const b = document.createElement('button');
       b.className = 'chip';
-      b.textContent = c.label;
+      b.textContent = c.label();
       b.setAttribute('aria-pressed', c.test());
       b.onclick = () => {
         c.apply();
@@ -268,6 +270,20 @@ function startSnow() {
   }
   renderChips();
 
+  // language toggle: recompute labels, rebuild popups, re-render
+  document.querySelectorAll('.lang button').forEach((b) =>
+    b.addEventListener('click', () => i18n.setLang(b.dataset.lang)),
+  );
+  document.addEventListener('langchange', () => {
+    const now = new Date();
+    entries.forEach((e) => {
+      e.st = status(e.m, now);
+      e.marker?.setPopupContent(popupHtml(e.m, e.st));
+    });
+    renderChips();
+    render({ fit: false });
+  });
+
   $('search').addEventListener('input', (e) => {
     state.q = e.target.value;
     render();
@@ -275,6 +291,65 @@ function startSnow() {
   $('toggle').addEventListener('click', () =>
     $('panel').classList.toggle('hidden'),
   );
+
+  // mobile sheet gestures: drag the handle/hero down to dismiss,
+  // swipe up on the toggle to bring it back, tap the map to dismiss
+  const panel = $('panel');
+  const isMobile = () => innerWidth <= 720;
+  const drag = (el, { onMove, onEnd }) => {
+    let y0 = null;
+    el.addEventListener('pointerdown', (e) => {
+      if (!isMobile()) return;
+      y0 = e.clientY;
+      el.setPointerCapture?.(e.pointerId);
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (y0 !== null) onMove(e.clientY - y0);
+    });
+    const end = (e) => {
+      if (y0 === null) return;
+      const dy = e.clientY - y0;
+      y0 = null;
+      onEnd(dy);
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+  };
+  for (const el of [$('grab'), document.querySelector('.hero')]) {
+    drag(el, {
+      onMove: (dy) => {
+        panel.classList.add('dragging');
+        panel.style.transform = `translateY(${Math.max(0, dy)}px)`;
+      },
+      onEnd: (dy) => {
+        panel.classList.remove('dragging');
+        panel.style.transform = '';
+        if (dy > 60) panel.classList.add('hidden');
+      },
+    });
+  }
+  let swiped = false;
+  drag($('toggle'), {
+    onMove: (dy) => {
+      if (dy < -20) swiped = true;
+    },
+    onEnd: (dy) => {
+      if (dy < -30) panel.classList.remove('hidden');
+    },
+  });
+  $('toggle').addEventListener(
+    'click',
+    (e) => {
+      if (swiped) {
+        e.stopImmediatePropagation();
+        swiped = false;
+      }
+    },
+    true,
+  );
+  map.on('click', () => {
+    if (isMobile()) panel.classList.add('hidden');
+  });
 
   render();
 })();

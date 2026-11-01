@@ -11,7 +11,9 @@
     "region": "Zürich",
     "opens": "2026-11-19 00:00:00.000Z",
     "closes": "2026-12-24 00:00:00.000Z",
-    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte"
+    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte",
+    "description_de": "Indoor-Markt in der Haupthalle des Hauptbahnhofs (ehemals Christkindlimarkt) mit über 100 Ständen, einem riesigen kristallgeschmückten Weihnachtsbaum und einer Polarlicht-Show.",
+    "hours_de": "So–Mi 11:00–21:00, Do–Sa 11:00–22:00 (24. Dez. früher Schluss; bitte prüfen)"
   },
   {
     "name": "Bellevue Noël",
@@ -25,7 +27,9 @@
     "region": "Zürich",
     "opens": "2026-11-19 00:00:00.000Z",
     "closes": "2026-12-23 00:00:00.000Z",
-    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte"
+    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte",
+    "description_de": "Markt am See vor dem Opernhaus (bis 2025 als Wienachtsdorf bekannt) mit begehbarem Adventskranz, lokalen Ständen und einem Fondue-Chalet.",
+    "hours_de": "Mo–Sa 11:00–22:00, So 11:00–20:00 (bitte prüfen)"
   },
   {
     "name": "Weihnachtsmarkt Münsterhof",
@@ -39,7 +43,9 @@
     "region": "Zürich",
     "opens": "2026-11-19 00:00:00.000Z",
     "closes": "2026-12-24 00:00:00.000Z",
-    "source": "https://www.zuerich-weihnachtsmarkt.ch/"
+    "source": "https://www.zuerich-weihnachtsmarkt.ch/",
+    "description_de": "Kleiner Markt zwischen historischen Fassaden mit lokalen Produkten und Zürcher Marken.",
+    "hours_de": "Mo–Sa 11:00–21:30, So 11:00–19:30"
   },
   {
     "name": "Dörfli-Weihnachtsmarkt (Altstadt)",
@@ -53,7 +59,9 @@
     "region": "Zürich",
     "opens": "2026-11-19 00:00:00.000Z",
     "closes": "2026-12-23 00:00:00.000Z",
-    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte"
+    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte",
+    "description_de": "Altstadt-Markt im «Dörfli» mit Kunsthandwerk und Essen aus aller Welt; Kinder-Eisbahn im Rosenhof.",
+    "hours_de": ""
   },
   {
     "name": "Zürcher Weihnachtsallee (Europaallee)",
@@ -67,7 +75,9 @@
     "region": "Zürich",
     "opens": "2026-11-19 00:00:00.000Z",
     "closes": "2026-12-23 00:00:00.000Z",
-    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte"
+    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte",
+    "description_de": "Die Europaallee im Adventskleid: internationale Köstlichkeiten, Design-Stände, Karaoke-Bar und Fondue-Chalet.",
+    "hours_de": ""
   },
   {
     "name": "Singing Christmas Tree & Werdmühleplatz Market",
@@ -81,7 +91,9 @@
     "region": "Zürich",
     "opens": "2026-11-19 00:00:00.000Z",
     "closes": "2026-12-23 00:00:00.000Z",
-    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte"
+    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte",
+    "description_de": "Kleiner Markt mit täglichen Chorkonzerten am Singing Christmas Tree und lokalen Bio-Spezialitäten.",
+    "hours_de": "Mo–Sa 11:00–22:00, So 11:00–20:00 (bitte prüfen)"
   },
   {
     "name": "Uetliberger Weihnachtsmarkt",
@@ -95,7 +107,9 @@
     "region": "Zürich",
     "opens": "2026-11-07 00:00:00.000Z",
     "closes": "2026-12-20 00:00:00.000Z",
-    "source": "https://weihnachtsmarkt-staedte.ch/"
+    "source": "https://weihnachtsmarkt-staedte.ch/",
+    "description_de": "Markt auf dem Hausberg über der Stadt, nur an Wochenenden geöffnet (14 Tage).",
+    "hours_de": "Nur samstags und sonntags"
   },
   {
     "name": "Weihnachtsmarkt Einsiedeln",
@@ -109,6 +123,8 @@
     "region": "Schwyz",
     "opens": "2026-11-27 00:00:00.000Z",
     "closes": "2026-12-06 00:00:00.000Z",
-    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte"
+    "source": "https://www.zuerich.com/de/sightseeing-aktivitaeten/shopping/weihnachtsmaerkte",
+    "description_de": "Markt vor dem Kloster Einsiedeln. Tagesausflug ab Zürich HB (Kanton Schwyz).",
+    "hours_de": ""
   }
 ]

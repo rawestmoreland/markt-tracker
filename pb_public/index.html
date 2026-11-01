@@ -25,21 +25,23 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
+    <script src="i18n.js"></script>
     <script type="text/javascript" src="app.js" defer></script>
     <title>Markt Tracker 🎄</title>
   </head>
   <body>
-    <div id="map" aria-label="Map of Christmas markets"></div>
+    <div id="map" data-i18n-attr="aria-label:mapLabel" aria-label="Map of Christmas markets"></div>
     <canvas id="snow" aria-hidden="true"></canvas>
 
     <aside id="panel">
+      <div id="grab" class="grab" aria-hidden="true"><span></span></div>
       <header class="hero">
-        <div class="garland" aria-hidden="true">
-          <span>🎄</span><span>⭐</span><span>🎁</span><span>⭐</span
-          ><span>🎄</span>
+        <div class="lang" role="group" data-i18n-attr="aria-label:languageLabel" aria-label="Language">
+          <button type="button" data-lang="en">EN</button>
+          <button type="button" data-lang="de">DE</button>
         </div>
         <h1>Markt <em>Tracker</em></h1>
-        <p class="tagline">
+        <p class="tagline" data-i18n="tagline">
           Mulled wine, twinkly lights &amp; wooden chalets &mdash; every
           Christmas market around Zürich, on one map.
         </p>
@@ -49,16 +51,17 @@
             id="search"
             type="search"
             placeholder="Search markets, streets, treats…"
+            data-i18n-attr="placeholder:searchPlaceholder"
             autocomplete="off"
           />
         </div>
-        <div id="filters" class="chips" role="group" aria-label="Filters"></div>
+        <div id="filters" class="chips" role="group" aria-label="Filters" data-i18n-attr="aria-label:filtersLabel"></div>
       </header>
 
       <div id="count" class="count" aria-live="polite"></div>
       <ul id="list" class="list"></ul>
     </aside>
 
-    <button id="toggle" aria-label="Show or hide the list">🎅 List</button>
+    <button id="toggle" data-i18n="toggleList" data-i18n-attr="aria-label:toggleLabel" aria-label="Show or hide the list">🎅 List</button>
   </body>
 </html>

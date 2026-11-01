@@ -31,7 +31,7 @@ WORKDIR /pb
 COPY --from=go-builder /build/pocketbase ./pocketbase
 
 # Only the files the frontend actually serves (not import.mjs, markets.json, node_modules...)
-COPY pb_public/index.html pb_public/app.js ./pb_public/
+COPY pb_public/index.html pb_public/app.js pb_public/i18n.js ./pb_public/
 COPY --from=css-builder /build/output.css ./pb_public/output.css
 
 EXPOSE 8080
