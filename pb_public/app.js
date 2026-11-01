@@ -142,10 +142,54 @@ function startSnow() {
   })();
 }
 
+function startSleigh() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const fly = () => {
+    if (document.hidden) return schedule();
+    const el = document.createElement('div');
+    el.className = 'sleigh';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<img src="santa.png" alt="" draggable="false" />';
+    const ltr = Math.random() < 0.5;
+    el.style.top = `${8 + Math.random() * 45}%`;
+    document.body.appendChild(el);
+    const w = el.offsetWidth;
+    const dir = ltr ? 1 : -1;
+    const from = ltr ? -w : innerWidth;
+    const to = ltr ? innerWidth : -w;
+    // gentle wave: bob up/down with the sleigh pitching along the slope
+    const amp = 28 + Math.random() * 20; // px
+    const waves = 2 + Math.random() * 1.5;
+    const phase = Math.random() * Math.PI * 2;
+    const steps = 40;
+    const frames = Array.from({ length: steps + 1 }, (_, i) => {
+      const p = i / steps;
+      const a = phase + p * waves * Math.PI * 2;
+      const x = from + (to - from) * p;
+      const y = Math.sin(a) * amp;
+      const rot = Math.cos(a) * 12 * dir; // degrees, nose follows the slope
+      return {
+        transform: `translate(${x}px, ${y}px) rotate(${rot}deg) scaleX(${dir})`,
+      };
+    });
+    const anim = el.animate(frames, {
+      duration: 9000 + innerWidth * 4,
+      easing: 'linear',
+    });
+    anim.onfinish = () => {
+      el.remove();
+      schedule();
+    };
+  };
+  const schedule = () => setTimeout(fly, 45000 + Math.random() * 75000);
+  setTimeout(fly, 8000 + Math.random() * 7000); // first pass shortly after load
+}
+
 (async function () {
   const map = initMap();
   window.marktMap = map; // used by add.js to pick a location
   startSnow();
+  startSleigh();
 
   const list = $('list');
   const state = { q: '', region: 'All', openOnly: false, activeId: null };

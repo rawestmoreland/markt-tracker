@@ -34,6 +34,22 @@ body {
   filter: sepia(0.35) saturate(1.15) hue-rotate(-10deg) brightness(1.02);
 }
 
+.sleigh {
+  position: fixed;
+  left: 0;
+  width: clamp(110px, 15vw, 200px);
+  pointer-events: none;
+  z-index: 501;
+  filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.25));
+  will-change: transform;
+}
+
+.sleigh img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 #snow {
   position: fixed;
   inset: 0;
@@ -658,7 +674,8 @@ body.picking #map {
     animation: none !important;
     transition: none !important;
   }
-  #snow {
+  #snow,
+  .sleigh {
     display: none;
   }
 }
