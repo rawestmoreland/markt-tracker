@@ -82,6 +82,62 @@ function initMap() {
   return map;
 }
 
+// anonymous voter id + remembered ratings live in this browser only
+const voterId = () => {
+  try {
+    let v = localStorage.getItem('voter');
+    if (!v) {
+      v = crypto.randomUUID();
+      localStorage.setItem('voter', v);
+    }
+    return v;
+  } catch {
+    return (voterId.mem ??= crypto.randomUUID());
+  }
+};
+const myRatings = () => {
+  try {
+    return JSON.parse(localStorage.getItem('ratings') || '{}');
+  } catch {
+    return {};
+  }
+};
+
+function ratingHtml(m) {
+  const mine = myRatings()[m.id] ?? 0;
+  const summary = m.rating_count
+    ? t('ratingSummary', { avg: m.rating_avg.toFixed(1), n: m.rating_count })
+    : t('ratingNone');
+  const stars = [1, 2, 3, 4, 5]
+    .map(
+      (n) =>
+        `<button type="button" class="star ${n <= mine ? 'on' : ''}" data-stars="${n}" aria-label="${esc(t('rateStars', { n }))}">★</button>`,
+    )
+    .join('');
+  return `<div class="rating" data-market="${esc(m.id)}">
+    <div class="stars" role="group" aria-label="${esc(t('rateThis'))}">${stars}</div>
+    <span class="rating-summary">${esc(summary)}</span>
+  </div>`;
+}
+
+async function rate(m, stars) {
+  const res = await fetch(`/api/markets/${encodeURIComponent(m.id)}/rate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stars, voter: voterId() }),
+  });
+  if (!res.ok) throw new Error(`rate failed (${res.status})`);
+  const { rating_avg, rating_count } = await res.json();
+  m.rating_avg = rating_avg;
+  m.rating_count = rating_count;
+  try {
+    localStorage.setItem(
+      'ratings',
+      JSON.stringify({ ...myRatings(), [m.id]: stars }),
+    );
+  } catch {}
+}
+
 function popupHtml(m, st) {
   const dates =
     m.opens || m.closes
@@ -97,6 +153,7 @@ function popupHtml(m, st) {
       ${m.address ? `<div class="row">📍 <span>${esc(m.address)}</span></div>` : ''}
       ${field(m, 'hours') ? `<div class="row">🕒 <span>${esc(field(m, 'hours'))}</span></div>` : ''}
       ${dates}
+      ${m.verified === false ? '' : ratingHtml(m)}
       <div class="row"><span class="badge ${st.key}"${badgeAttrs(st)}>${esc(st.label)}</span></div>
       ${site}
     </div>`;
@@ -219,6 +276,20 @@ function startSleigh() {
         riseOnHover: true,
       }).bindPopup(popupHtml(m, st), { autoPanPadding: [40, 40] });
       marker.on('click', () => select(m.id, false));
+      // popup content is re-rendered after each vote, so delegate on the popup
+      marker.once('popupopen', (ev) => {
+        ev.popup.getElement().addEventListener('click', async (c) => {
+          const btn = c.target.closest('.star');
+          if (!btn) return;
+          try {
+            await rate(m, +btn.dataset.stars);
+            marker.setPopupContent(popupHtml(m, status(m)));
+          } catch (err) {
+            console.error(err);
+            alert(t('rateFailed'));
+          }
+        });
+      });
     }
     return { m, st, marker };
   };

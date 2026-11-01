@@ -542,6 +542,31 @@ h1 em {
   gap: 8px;
   margin: 4px 0;
 }
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+}
+.rating .star {
+  background: none;
+  border: 0;
+  padding: 0 1px;
+  font-size: 20px;
+  line-height: 1;
+  color: #cdbfa8;
+  cursor: pointer;
+}
+.rating .star.on, .rating .stars:hover .star {
+  color: #e8a317;
+}
+.rating .stars .star:hover ~ .star {
+  color: #cdbfa8;
+}
+.rating-summary {
+  font-size: 12px;
+  opacity: 0.75;
+}
 .popup-body a.btn {
   display: inline-block;
   margin-top: 8px;
