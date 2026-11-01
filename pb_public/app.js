@@ -31,6 +31,17 @@ const fold = (s) =>
 
 const DAY = 86400000;
 
+function countdownLabel(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(total / 86400);
+  const p = (n) => String(n).padStart(2, '0');
+  const hms = `${p(Math.floor((total % 86400) / 3600))}:${p(Math.floor((total % 3600) / 60))}:${p(total % 60)}`;
+  return t('statusCountdown', { time: d ? `${d}${t('dayShort')} ${hms}` : hms });
+}
+
+// attributes that let the 1s ticker find and update a countdown badge
+const badgeAttrs = (st) => (st.opens ? ` data-opens="${st.opens}"` : '');
+
 function status(m, now = new Date()) {
   const opens = m.opens && new Date(m.opens.replace(' ', 'T'));
   const closes = m.closes && new Date(m.closes.replace(' ', 'T'));
@@ -38,10 +49,10 @@ function status(m, now = new Date()) {
     return { key: 'closed', label: t('statusClosed') };
   }
   if (opens && now < opens) {
-    const days = Math.ceil((opens - now) / DAY);
     return {
       key: 'soon',
-      label: days === 1 ? t('statusTomorrow') : t('statusSoon', { days }),
+      opens: +opens,
+      label: countdownLabel(+opens - now),
     };
   }
   return { key: 'open', label: t('statusOpen') };
@@ -86,7 +97,7 @@ function popupHtml(m, st) {
       ${m.address ? `<div class="row">📍 <span>${esc(m.address)}</span></div>` : ''}
       ${field(m, 'hours') ? `<div class="row">🕒 <span>${esc(field(m, 'hours'))}</span></div>` : ''}
       ${dates}
-      <div class="row"><span class="badge ${st.key}">${esc(st.label)}</span></div>
+      <div class="row"><span class="badge ${st.key}"${badgeAttrs(st)}>${esc(st.label)}</span></div>
       ${site}
     </div>`;
 }
@@ -229,7 +240,7 @@ function startSnow() {
           <h2>${esc(m.name)}</h2>
           <div class="addr">${esc(m.address)}</div>
           <div class="meta">
-            <span class="badge ${st.key}">${esc(st.label)}</span>
+            <span class="badge ${st.key}"${badgeAttrs(st)}>${esc(st.label)}</span>
             ${m.verified === false ? `<span class="badge">${esc(t('pendingReview'))}</span>` : ''}
             ${m.opens ? `<span class="badge">📅 ${esc(fmtDate(m.opens))} – ${esc(fmtDate(m.closes))}</span>` : ''}
             ${m.region ? `<span class="badge">${esc(m.region)}</span>` : ''}
@@ -295,6 +306,24 @@ function startSnow() {
     renderChips();
     render({ fit: false });
   });
+
+  // live countdowns: tick every second; when one hits zero, refresh statuses
+  setInterval(() => {
+    const now = new Date();
+    let expired = false;
+    document.querySelectorAll('[data-opens]').forEach((el) => {
+      const ms = +el.dataset.opens - now;
+      if (ms <= 0) expired = true;
+      else el.textContent = countdownLabel(ms);
+    });
+    if (expired) {
+      entries.forEach((e) => {
+        e.st = status(e.m, now);
+        e.marker?.setPopupContent(popupHtml(e.m, e.st));
+      });
+      render({ fit: false });
+    }
+  }, 1000);
 
   // a market was just submitted: show it right away (pending review)
   document.addEventListener('marketcreated', (ev) => {

@@ -9,6 +9,7 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Nunito:wght@400;600;700&display=swap"
       rel="stylesheet"
@@ -32,15 +33,29 @@
     <title>Markt Tracker 🎄</title>
   </head>
   <body>
-    <div id="map" data-i18n-attr="aria-label:mapLabel" aria-label="Map of Christmas markets"></div>
+    <div
+      id="map"
+      data-i18n-attr="aria-label:mapLabel"
+      aria-label="Map of Christmas markets"
+    ></div>
     <canvas id="snow" aria-hidden="true"></canvas>
 
     <aside id="panel">
       <div id="grab" class="grab" aria-hidden="true"><span></span></div>
       <header class="hero">
         <div class="topbar">
-          <button type="button" id="account" class="account" aria-haspopup="dialog"></button>
-          <div class="lang" role="group" data-i18n-attr="aria-label:languageLabel" aria-label="Language">
+          <button
+            type="button"
+            id="account"
+            class="account"
+            aria-haspopup="dialog"
+          ></button>
+          <div
+            class="lang"
+            role="group"
+            data-i18n-attr="aria-label:languageLabel"
+            aria-label="Language"
+          >
             <button type="button" data-lang="en">EN</button>
             <button type="button" data-lang="de">DE</button>
           </div>
@@ -60,41 +75,101 @@
             autocomplete="off"
           />
         </div>
-        <div id="filters" class="chips" role="group" aria-label="Filters" data-i18n-attr="aria-label:filtersLabel"></div>
+        <div
+          id="filters"
+          class="chips"
+          role="group"
+          aria-label="Filters"
+          data-i18n-attr="aria-label:filtersLabel"
+        ></div>
       </header>
 
       <div class="count-row">
         <div id="count" class="count" aria-live="polite"></div>
-        <button type="button" id="add-market" class="add-btn" hidden data-i18n="addMarket">➕ Add market</button>
+        <button
+          type="button"
+          id="add-market"
+          class="add-btn"
+          hidden
+          data-i18n="addMarket"
+        >
+          ➕ Add market
+        </button>
       </div>
       <ul id="list" class="list"></ul>
     </aside>
 
-    <button id="toggle" data-i18n="toggleList" data-i18n-attr="aria-label:toggleLabel" aria-label="Show or hide the list">🎅 List</button>
+    <button
+      id="toggle"
+      data-i18n="toggleList"
+      data-i18n-attr="aria-label:toggleLabel"
+      aria-label="Show or hide the list"
+    >
+      🎅 List
+    </button>
 
     <dialog id="auth" aria-labelledby="auth-title">
       <form id="auth-email" method="dialog" novalidate>
         <h2 id="auth-title" data-i18n="authTitle">Sign in or sign up</h2>
-        <p data-i18n="authIntro">Enter your email and we'll send you a one-time code. No password needed.</p>
+        <p data-i18n="authIntro">
+          Enter your email and we'll send you a one-time code. No password
+          needed.
+        </p>
         <label for="auth-email-input" data-i18n="authEmail">Email</label>
-        <input id="auth-email-input" type="email" required autocomplete="email" inputmode="email" />
+        <input
+          id="auth-email-input"
+          type="email"
+          required
+          autocomplete="email"
+          inputmode="email"
+        />
         <p class="auth-error" role="alert" hidden></p>
         <div class="auth-actions">
-          <button type="button" class="ghost" data-close data-i18n="authCancel">Cancel</button>
-          <button type="submit" class="primary" data-i18n="authSend">Send code</button>
+          <button type="button" class="ghost" data-close data-i18n="authCancel">
+            Cancel
+          </button>
+          <button type="submit" class="primary" data-i18n="authSend">
+            Send code
+          </button>
         </div>
       </form>
       <form id="auth-code" method="dialog" novalidate hidden>
         <h2 data-i18n="authCodeTitle">Check your inbox</h2>
-        <p><span data-i18n="authCodeIntro">We sent a code to</span> <b id="auth-sent-to"></b></p>
+        <p>
+          <span data-i18n="authCodeIntro">We sent a code to</span>
+          <b id="auth-sent-to"></b>
+        </p>
         <label for="auth-code-input" data-i18n="authCode">Code</label>
-        <input id="auth-code-input" type="text" required autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+        <input
+          id="auth-code-input"
+          type="text"
+          required
+          autocomplete="one-time-code"
+          inputmode="numeric"
+          pattern="[0-9]*"
+        />
         <p class="auth-error" role="alert" hidden></p>
         <div class="auth-actions">
-          <button type="button" class="ghost" id="auth-back" data-i18n="authBack">Back</button>
-          <button type="submit" class="primary" data-i18n="authVerify">Verify</button>
+          <button
+            type="button"
+            class="ghost"
+            id="auth-back"
+            data-i18n="authBack"
+          >
+            Back
+          </button>
+          <button type="submit" class="primary" data-i18n="authVerify">
+            Verify
+          </button>
         </div>
-        <button type="button" class="link" id="auth-resend" data-i18n="authResend">Send a new code</button>
+        <button
+          type="button"
+          class="link"
+          id="auth-resend"
+          data-i18n="authResend"
+        >
+          Send a new code
+        </button>
       </form>
     </dialog>
 
@@ -104,21 +179,68 @@
         <label data-i18n="authEmail">Email</label>
         <p id="profile-email" class="profile-email"></p>
         <div class="auth-actions">
-          <button type="button" class="ghost" data-close data-i18n="profileClose">Close</button>
-          <button type="button" class="primary" id="sign-out" data-i18n="authSignOut">Sign out</button>
+          <button
+            type="button"
+            class="ghost"
+            data-close
+            data-i18n="profileClose"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="primary"
+            id="sign-out"
+            data-i18n="authSignOut"
+          >
+            Sign out
+          </button>
         </div>
         <hr />
-        <button type="button" class="danger-link" id="delete-start" data-i18n="deleteAccount">Delete account</button>
+        <button
+          type="button"
+          class="danger-link"
+          id="delete-start"
+          data-i18n="deleteAccount"
+        >
+          Delete account
+        </button>
       </div>
       <div id="profile-delete" hidden>
         <h2 data-i18n="deleteTitle">Delete your account?</h2>
-        <p data-i18n="deleteWarning">This will permanently delete your account and any of your markets that are still pending review. This cannot be undone.</p>
-        <label for="delete-typed" data-i18n="deleteTypePrompt">Type your email address to confirm</label>
-        <input id="delete-typed" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <p data-i18n="deleteWarning">
+          This will permanently delete your account and any of your markets that
+          are still pending review. This cannot be undone.
+        </p>
+        <label for="delete-typed" data-i18n="deleteTypePrompt"
+          >Type your email address to confirm</label
+        >
+        <input
+          id="delete-typed"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
         <p class="auth-error" role="alert" hidden></p>
         <div class="auth-actions">
-          <button type="button" class="ghost" id="delete-cancel" data-i18n="authCancel">Cancel</button>
-          <button type="button" class="primary danger" id="delete-confirm" disabled data-i18n="deleteConfirm">Delete my account</button>
+          <button
+            type="button"
+            class="ghost"
+            id="delete-cancel"
+            data-i18n="authCancel"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="primary danger"
+            id="delete-confirm"
+            disabled
+            data-i18n="deleteConfirm"
+          >
+            Delete my account
+          </button>
         </div>
       </div>
     </dialog>
@@ -126,9 +248,19 @@
     <dialog id="add" aria-labelledby="add-title">
       <form id="add-form" method="dialog" novalidate>
         <h2 id="add-title" data-i18n="addTitle">Add a market</h2>
-        <p data-i18n="addIntro">Know a Christmas market that's missing? Tell us about it. New entries are reviewed before they appear for everyone.</p>
+        <p data-i18n="addIntro">
+          Know a Christmas market that's missing? Tell us about it. New entries
+          are reviewed before they appear for everyone.
+        </p>
         <label for="add-name" data-i18n="addName">Name</label>
-        <input id="add-name" name="name" type="text" required maxlength="120" autocomplete="off" />
+        <input
+          id="add-name"
+          name="name"
+          type="text"
+          required
+          maxlength="120"
+          autocomplete="off"
+        />
         <label for="add-address" data-i18n="addAddress">Address</label>
         <input id="add-address" name="address" type="text" autocomplete="off" />
         <div class="add-row">
@@ -144,16 +276,42 @@
         <div class="add-row">
           <div>
             <label for="add-lat" data-i18n="addLat">Latitude</label>
-            <input id="add-lat" name="lat" type="number" step="any" min="-90" max="90" required inputmode="decimal" />
+            <input
+              id="add-lat"
+              name="lat"
+              type="number"
+              step="any"
+              min="-90"
+              max="90"
+              required
+              inputmode="decimal"
+            />
           </div>
           <div>
             <label for="add-lng" data-i18n="addLng">Longitude</label>
-            <input id="add-lng" name="lng" type="number" step="any" min="-180" max="180" required inputmode="decimal" />
+            <input
+              id="add-lng"
+              name="lng"
+              type="number"
+              step="any"
+              min="-180"
+              max="180"
+              required
+              inputmode="decimal"
+            />
           </div>
         </div>
-        <button type="button" class="link" id="add-pick" data-i18n="addPick">📍 Pick location on the map</button>
+        <button type="button" class="link" id="add-pick" data-i18n="addPick">
+          📍 Pick location on the map
+        </button>
         <label for="add-hours" data-i18n="addHours">Opening hours</label>
-        <input id="add-hours" name="hours" type="text" placeholder="Mon–Sun 11:00–21:00" autocomplete="off" />
+        <input
+          id="add-hours"
+          name="hours"
+          type="text"
+          placeholder="Mon–Sun 11:00–21:00"
+          autocomplete="off"
+        />
         <label for="add-region" data-i18n="addRegion">Region</label>
         <select id="add-region" name="region">
           <option value="" data-i18n="addRegionNone">Select a canton…</option>
@@ -185,16 +343,41 @@
           <option>Zürich</option>
         </select>
         <label for="add-website" data-i18n="addWebsite">Website</label>
-        <input id="add-website" name="website" type="url" placeholder="https://" autocomplete="url" />
-        <label for="add-description" data-i18n="addDescription">Description</label>
-        <textarea id="add-description" name="description" rows="3" maxlength="1000"></textarea>
+        <input
+          id="add-website"
+          name="website"
+          type="url"
+          placeholder="https://"
+          autocomplete="url"
+        />
+        <label for="add-description" data-i18n="addDescription"
+          >Description</label
+        >
+        <textarea
+          id="add-description"
+          name="description"
+          rows="3"
+          maxlength="1000"
+        ></textarea>
         <p class="auth-error" role="alert" hidden></p>
         <div class="auth-actions">
-          <button type="button" class="ghost" data-close data-i18n="authCancel">Cancel</button>
-          <button type="submit" class="primary" data-i18n="addSubmit">Submit</button>
+          <button type="button" class="ghost" data-close data-i18n="authCancel">
+            Cancel
+          </button>
+          <button type="submit" class="primary" data-i18n="addSubmit">
+            Submit
+          </button>
         </div>
       </form>
     </dialog>
-    <div id="pick-hint" class="pick-hint" role="status" hidden data-i18n="addPickHint">Tap the map to place the market (Esc to cancel)</div>
+    <div
+      id="pick-hint"
+      class="pick-hint"
+      role="status"
+      hidden
+      data-i18n="addPickHint"
+    >
+      Tap the map to place the market (Esc to cancel)
+    </div>
   </body>
 </html>

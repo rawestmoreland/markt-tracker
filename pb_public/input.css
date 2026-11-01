@@ -293,6 +293,7 @@ h1 em {
 }
 
 .badge {
+  font-variant-numeric: tabular-nums;
   border-radius: 999px;
   padding: 2px 9px;
   background: #f6ecdd;
