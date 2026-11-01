@@ -19,6 +19,16 @@ const fmtDate = (d) =>
       })
     : '';
 
+// Case/diacritic-insensitive text for search: "Zürich", "Zurich" and
+// "Zuerich" all fold to the same string.
+const fold = (s) =>
+  String(s ?? '')
+    .toLowerCase()
+    .replace(/ß/g, 'ss')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/([aou])e/g, '$1');
+
 const DAY = 86400000;
 
 function status(m, now = new Date()) {
@@ -160,12 +170,11 @@ function startSnow() {
   function matches({ m, st }) {
     if (state.region !== 'All' && m.region !== state.region) return false;
     if (state.openOnly && st.key === 'closed') return false;
-    const q = state.q.trim().toLowerCase();
+    const q = fold(state.q.trim());
     if (!q) return true;
-    return [m.name, m.address, field(m, 'description'), m.region]
-      .join(' ')
-      .toLowerCase()
-      .includes(q);
+    return fold(
+      [m.name, m.address, field(m, 'description'), m.region].join(' '),
+    ).includes(q);
   }
 
   function select(id, fly = true) {
