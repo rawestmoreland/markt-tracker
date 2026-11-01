@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Find every Christmas market around Zürich on one cozy map."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Nunito:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="output.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script type="text/javascript" src="app.js" defer></script>
+    <title>Markt Tracker 🎄</title>
+  </head>
+  <body>
+    <div id="map" aria-label="Map of Christmas markets"></div>
+    <canvas id="snow" aria-hidden="true"></canvas>
+
+    <aside id="panel">
+      <header class="hero">
+        <div class="garland" aria-hidden="true">
+          <span>🎄</span><span>⭐</span><span>🎁</span><span>⭐</span
+          ><span>🎄</span>
+        </div>
+        <h1>Markt <em>Tracker</em></h1>
+        <p class="tagline">
+          Mulled wine, twinkly lights &amp; wooden chalets &mdash; every
+          Christmas market around Zürich, on one map.
+        </p>
+        <div class="search">
+          <span aria-hidden="true">🔍</span>
+          <input
+            id="search"
+            type="search"
+            placeholder="Search markets, streets, treats…"
+            autocomplete="off"
+          />
+        </div>
+        <div id="filters" class="chips" role="group" aria-label="Filters"></div>
+      </header>
+
+      <div id="count" class="count" aria-live="polite"></div>
+      <ul id="list" class="list"></ul>
+    </aside>
+
+    <button id="toggle" aria-label="Show or hide the list">🎅 List</button>
+  </body>
+</html>

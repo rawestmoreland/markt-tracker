@@ -1,0 +1,7 @@
+node_modules
+package*.json
+
+.env*
+!.env.example
+
+pb_data
