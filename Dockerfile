@@ -1,54 +1,38 @@
-# CSS Build stage
+# CSS build stage
 FROM node:20-alpine AS css-builder
 WORKDIR /build
 
-# Only copy over the package management metadata first
-COPY ./pb_public/package*.json .
+# Dependencies first so this layer is cached until package files change
+COPY pb_public/package*.json ./
 RUN npm ci
 
-COPY ./pb_public/input.css input.css
-
-# Generates the minified production output.css inside /pb_public/
+COPY pb_public/input.css ./
 RUN npx @tailwindcss/cli -i ./input.css -o ./output.css --minify
 
-# Go Build stage
-FROM golang:1.27.0-alpine AS go-builder
-
-# Set working directory for the build
+# Go build stage
+FROM golang:1.27-alpine AS go-builder
 WORKDIR /build
 
-# Install necessary build dependencies
-RUN apk add --no-cache gcc musl-dev
+# Module download layer is cached until go.mod/go.sum change
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
 
-# Copy the Go project
-COPY . .
+COPY main.go ./
+# PocketBase uses pure-Go SQLite (modernc), so no CGO/gcc is needed
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=0 go build -ldflags="-s -w" -o pocketbase .
 
-# Download Go dependencies
-RUN go mod download
-
-# Extract the output CSS folder into the Go build
-COPY --from=css-builder /build/output.css ./pb_public/output.css
-
-# Build the application
-RUN CGO_ENABLED=1 go build -ldflags="-s -w" -o pocketbase .
-
-# Final stage - similar to your original Dockerfile
-FROM alpine:latest
-
-# Install necessary runtime dependencies
+# Final stage
+FROM alpine:3.22
 RUN apk add --no-cache ca-certificates tzdata
 
-# Create app directory
-RUN mkdir -p /pb/pb_data /pb/pb_public /pb/pb_migrations
+WORKDIR /pb
+COPY --from=go-builder /build/pocketbase ./pocketbase
 
-# Copy the compiled binary from the builder stage
-COPY --from=go-builder /build/pocketbase /pb/
+# Only the files the frontend actually serves (not import.mjs, markets.json, node_modules...)
+COPY pb_public/index.html pb_public/app.js ./pb_public/
+COPY --from=css-builder /build/output.css ./pb_public/output.css
 
-# Set proper permissions
-RUN chmod +x /pb/pocketbase
-
-# Expose the port
 EXPOSE 8080
-
-# Start PocketBase
 CMD ["/pb/pocketbase", "serve", "--http=0.0.0.0:8080"]
