@@ -133,6 +133,7 @@ function startSnow() {
 
 (async function () {
   const map = initMap();
+  window.marktMap = map; // used by add.js to pick a location
   startSnow();
 
   const list = $('list');
@@ -147,7 +148,7 @@ function startSnow() {
     return;
   }
 
-  const entries = markets.map((m) => {
+  const makeEntry = (m) => {
     const st = status(m);
     const hasPos = m.lat && m.lng;
     let marker = null;
@@ -165,7 +166,8 @@ function startSnow() {
       marker.on('click', () => select(m.id, false));
     }
     return { m, st, marker };
-  });
+  };
+  const entries = markets.map(makeEntry);
 
   function matches({ m, st }) {
     if (state.region !== 'All' && m.region !== state.region) return false;
@@ -228,6 +230,7 @@ function startSnow() {
           <div class="addr">${esc(m.address)}</div>
           <div class="meta">
             <span class="badge ${st.key}">${esc(st.label)}</span>
+            ${m.verified === false ? `<span class="badge">${esc(t('pendingReview'))}</span>` : ''}
             ${m.opens ? `<span class="badge">📅 ${esc(fmtDate(m.opens))} – ${esc(fmtDate(m.closes))}</span>` : ''}
             ${m.region ? `<span class="badge">${esc(m.region)}</span>` : ''}
           </div>
@@ -291,6 +294,18 @@ function startSnow() {
     });
     renderChips();
     render({ fit: false });
+  });
+
+  // a market was just submitted: show it right away (pending review)
+  document.addEventListener('marketcreated', (ev) => {
+    const entry = makeEntry(ev.detail);
+    entries.push(entry);
+    state.q = '';
+    state.region = 'All';
+    $('search').value = '';
+    renderChips();
+    render({ fit: false });
+    select(ev.detail.id);
   });
 
   $('search').addEventListener('input', (e) => {

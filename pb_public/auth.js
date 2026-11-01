@@ -120,22 +120,82 @@
       (which === 'email' ? emailInput : codeInput).focus();
     };
 
+    const pMain = $('profile-main');
+    const pDelete = $('profile-delete');
+    const delErr = pDelete.querySelector('.auth-error');
+    const profile = $('profile');
+    const typed = $('delete-typed');
+    const confirmBtn = $('delete-confirm');
+    const armed = () =>
+      !!auth.record &&
+      typed.value.trim().toLowerCase() === auth.record.email.toLowerCase();
+    const pStep = (del) => {
+      pMain.hidden = del;
+      pDelete.hidden = !del;
+      delErr.hidden = true;
+      typed.value = '';
+      confirmBtn.disabled = true;
+      if (del) typed.focus();
+    };
+    typed.addEventListener('input', () => (confirmBtn.disabled = !armed()));
+    typed.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') e.preventDefault(); // never submit by accident
+    });
+    profile.addEventListener('close', () => pStep(false));
+
     function renderAccount() {
       account.textContent = auth.record
-        ? `${auth.record.email} · ${t('authSignOut')}`
+        ? `👤 ${auth.record.email}`
         : t('authSignIn');
       account.title = auth.record ? auth.record.email : '';
+      $('profile-email').textContent = auth.record?.email ?? '';
+      if (!auth.token && profile.open) profile.close();
     }
     renderAccount();
     document.addEventListener('authchange', renderAccount);
     document.addEventListener('langchange', renderAccount);
 
     account.addEventListener('click', () => {
-      if (auth.token) return auth.clear();
+      if (auth.token) {
+        pStep(false);
+        return profile.showModal();
+      }
       showError(emailForm, null);
       showError(codeForm, null);
       step('email');
       dlg.showModal();
+    });
+    profile.querySelectorAll('[data-close]').forEach((b) =>
+      b.addEventListener('click', () => profile.close()),
+    );
+    $('sign-out').addEventListener('click', () => auth.clear());
+    $('delete-start').addEventListener('click', () => pStep(true));
+    $('delete-cancel').addEventListener('click', () => pStep(false));
+    $('delete-confirm').addEventListener('click', async () => {
+      if (!armed()) return;
+      const btn = confirmBtn;
+      const label = btn.textContent;
+      delErr.hidden = true;
+      btn.disabled = true;
+      btn.textContent = t('deleting');
+      try {
+        const res = await fetch(`${API}/records/${auth.record.id}`, {
+          method: 'DELETE',
+          headers: auth.headers(),
+        });
+        // 404/401: account is already gone or the token is dead; either way sign out
+        if (!res.ok && ![401, 404].includes(res.status)) {
+          throw new Error(`delete account ${res.status}`);
+        }
+        auth.clear();
+      } catch (err) {
+        console.error(err);
+        delErr.textContent = t('deleteFailed');
+        delErr.hidden = false;
+      } finally {
+        btn.disabled = !armed();
+        btn.textContent = label;
+      }
     });
     dlg.querySelectorAll('[data-close]').forEach((b) =>
       b.addEventListener('click', () => dlg.close()),

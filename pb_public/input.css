@@ -133,7 +133,7 @@ h1 em {
   color: var(--cream);
   border-radius: 999px;
   padding: 1px 10px;
-  max-width: 60%;
+  max-width: 68%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -188,6 +188,30 @@ h1 em {
   color: var(--pine-deep);
 }
 
+.count-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-right: 20px;
+}
+.add-btn {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 6px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--berry);
+  color: #fff;
+  box-shadow: 0 2px 0 var(--berry-deep);
+  white-space: nowrap;
+}
+.add-btn[hidden] {
+  display: none;
+}
 .count {
   padding: 10px 20px 4px;
   font-size: 12px;
@@ -385,7 +409,7 @@ h1 em {
 }
 
 /* ---------- auth dialog ---------- */
-#auth {
+:is(#auth, #add, #profile) {
   z-index: 800;
   width: min(380px, calc(100vw - 32px));
   margin: auto;
@@ -396,10 +420,10 @@ h1 em {
   border-radius: 24px;
   box-shadow: var(--shadow);
 }
-#auth::backdrop {
+:is(#auth, #add, #profile)::backdrop {
   background: rgb(11 58 32 / 0.55);
 }
-#auth h2 {
+:is(#auth, #add, #profile) h2 {
   font-family: 'Fraunces', serif;
   font-weight: 800;
   font-size: 24px;
@@ -407,12 +431,12 @@ h1 em {
   margin: 0 0 6px;
   color: var(--pine);
 }
-#auth p {
+:is(#auth, #add, #profile) p {
   margin: 0 0 12px;
   font-size: 14px;
   line-height: 1.4;
 }
-#auth label {
+:is(#auth, #add, #profile) label {
   display: block;
   font-size: 12px;
   font-weight: 800;
@@ -421,7 +445,7 @@ h1 em {
   color: var(--muted);
   margin-bottom: 4px;
 }
-#auth input {
+:is(#auth, #add, #profile) :is(input, textarea, select) {
   width: 100%;
   box-sizing: border-box;
   font: inherit;
@@ -432,7 +456,7 @@ h1 em {
   background: #fff;
   color: var(--ink);
 }
-#auth input:focus {
+:is(#auth, #add, #profile) :is(input, textarea, select):focus {
   outline: 0;
   border-color: var(--berry);
 }
@@ -441,41 +465,41 @@ h1 em {
   text-align: center;
   font-weight: 700;
 }
-#auth .auth-error {
+:is(#auth, #add, #profile) .auth-error {
   margin: 8px 0 0;
   color: var(--berry-deep);
   font-weight: 700;
   font-size: 13px;
 }
-#auth .auth-actions {
+:is(#auth, #add, #profile) .auth-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
   margin-top: 16px;
 }
-#auth .auth-actions button {
+:is(#auth, #add, #profile) .auth-actions button {
   font: inherit;
   font-weight: 700;
   cursor: pointer;
   border-radius: 999px;
   padding: 7px 16px;
 }
-#auth .primary {
+:is(#auth, #add, #profile) .primary {
   background: var(--berry);
   color: #fff;
   border: 0;
   box-shadow: 0 3px 0 var(--berry-deep);
 }
-#auth .primary:disabled {
+:is(#auth, #add, #profile) .primary:disabled {
   opacity: 0.6;
   cursor: wait;
 }
-#auth .ghost {
+:is(#auth, #add, #profile) .ghost {
   background: transparent;
   color: var(--ink);
   border: 2px solid #f1e3cf;
 }
-#auth .link {
+:is(#auth, #add, #profile) .link {
   display: block;
   margin: 12px auto 0;
   font: inherit;
@@ -485,6 +509,74 @@ h1 em {
   border: 0;
   text-decoration: underline;
   cursor: pointer;
+}
+
+#add {
+  width: min(460px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+#add label {
+  margin-top: 10px;
+}
+#add textarea {
+  border-radius: 18px;
+  resize: vertical;
+}
+#add .add-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+#add .link {
+  margin: 8px 0 0;
+}
+.pick-hint {
+  position: fixed;
+  z-index: 900;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 32px);
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--pine-deep);
+  color: var(--cream);
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: var(--shadow);
+}
+.pick-hint[hidden] {
+  display: none;
+}
+body.picking #map {
+  cursor: crosshair;
+}
+
+#profile .profile-email {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+#profile hr {
+  border: 0;
+  border-top: 2px solid #f1e3cf;
+  margin: 16px 0 8px;
+}
+#profile .danger-link {
+  display: block;
+  margin: 0 auto;
+  font: inherit;
+  font-size: 13px;
+  color: var(--berry-deep);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+#profile .primary.danger {
+  background: var(--berry-deep);
+  box-shadow: 0 3px 0 #000;
 }
 
 /* ---------- mobile sheet handle ---------- */

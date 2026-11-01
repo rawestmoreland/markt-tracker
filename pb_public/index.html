@@ -27,6 +27,7 @@
     ></script>
     <script src="i18n.js"></script>
     <script type="text/javascript" src="auth.js" defer></script>
+    <script type="text/javascript" src="add.js" defer></script>
     <script type="text/javascript" src="app.js" defer></script>
     <title>Markt Tracker 🎄</title>
   </head>
@@ -38,7 +39,7 @@
       <div id="grab" class="grab" aria-hidden="true"><span></span></div>
       <header class="hero">
         <div class="topbar">
-          <button type="button" id="account" class="account"></button>
+          <button type="button" id="account" class="account" aria-haspopup="dialog"></button>
           <div class="lang" role="group" data-i18n-attr="aria-label:languageLabel" aria-label="Language">
             <button type="button" data-lang="en">EN</button>
             <button type="button" data-lang="de">DE</button>
@@ -62,7 +63,10 @@
         <div id="filters" class="chips" role="group" aria-label="Filters" data-i18n-attr="aria-label:filtersLabel"></div>
       </header>
 
-      <div id="count" class="count" aria-live="polite"></div>
+      <div class="count-row">
+        <div id="count" class="count" aria-live="polite"></div>
+        <button type="button" id="add-market" class="add-btn" hidden data-i18n="addMarket">➕ Add market</button>
+      </div>
       <ul id="list" class="list"></ul>
     </aside>
 
@@ -93,5 +97,104 @@
         <button type="button" class="link" id="auth-resend" data-i18n="authResend">Send a new code</button>
       </form>
     </dialog>
+
+    <dialog id="profile" aria-labelledby="profile-title">
+      <div id="profile-main">
+        <h2 id="profile-title" data-i18n="profileTitle">Your profile</h2>
+        <label data-i18n="authEmail">Email</label>
+        <p id="profile-email" class="profile-email"></p>
+        <div class="auth-actions">
+          <button type="button" class="ghost" data-close data-i18n="profileClose">Close</button>
+          <button type="button" class="primary" id="sign-out" data-i18n="authSignOut">Sign out</button>
+        </div>
+        <hr />
+        <button type="button" class="danger-link" id="delete-start" data-i18n="deleteAccount">Delete account</button>
+      </div>
+      <div id="profile-delete" hidden>
+        <h2 data-i18n="deleteTitle">Delete your account?</h2>
+        <p data-i18n="deleteWarning">This will permanently delete your account and any of your markets that are still pending review. This cannot be undone.</p>
+        <label for="delete-typed" data-i18n="deleteTypePrompt">Type your email address to confirm</label>
+        <input id="delete-typed" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <p class="auth-error" role="alert" hidden></p>
+        <div class="auth-actions">
+          <button type="button" class="ghost" id="delete-cancel" data-i18n="authCancel">Cancel</button>
+          <button type="button" class="primary danger" id="delete-confirm" disabled data-i18n="deleteConfirm">Delete my account</button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="add" aria-labelledby="add-title">
+      <form id="add-form" method="dialog" novalidate>
+        <h2 id="add-title" data-i18n="addTitle">Add a market</h2>
+        <p data-i18n="addIntro">Know a Christmas market that's missing? Tell us about it. New entries are reviewed before they appear for everyone.</p>
+        <label for="add-name" data-i18n="addName">Name</label>
+        <input id="add-name" name="name" type="text" required maxlength="120" autocomplete="off" />
+        <label for="add-address" data-i18n="addAddress">Address</label>
+        <input id="add-address" name="address" type="text" autocomplete="off" />
+        <div class="add-row">
+          <div>
+            <label for="add-opens" data-i18n="addOpens">Opens</label>
+            <input id="add-opens" name="opens" type="date" />
+          </div>
+          <div>
+            <label for="add-closes" data-i18n="addCloses">Closes</label>
+            <input id="add-closes" name="closes" type="date" />
+          </div>
+        </div>
+        <div class="add-row">
+          <div>
+            <label for="add-lat" data-i18n="addLat">Latitude</label>
+            <input id="add-lat" name="lat" type="number" step="any" min="-90" max="90" required inputmode="decimal" />
+          </div>
+          <div>
+            <label for="add-lng" data-i18n="addLng">Longitude</label>
+            <input id="add-lng" name="lng" type="number" step="any" min="-180" max="180" required inputmode="decimal" />
+          </div>
+        </div>
+        <button type="button" class="link" id="add-pick" data-i18n="addPick">📍 Pick location on the map</button>
+        <label for="add-hours" data-i18n="addHours">Opening hours</label>
+        <input id="add-hours" name="hours" type="text" placeholder="Mon–Sun 11:00–21:00" autocomplete="off" />
+        <label for="add-region" data-i18n="addRegion">Region</label>
+        <select id="add-region" name="region">
+          <option value="" data-i18n="addRegionNone">Select a canton…</option>
+          <option>Aargau</option>
+          <option>Appenzell Ausserrhoden</option>
+          <option>Appenzell Innerrhoden</option>
+          <option>Basel-Landschaft</option>
+          <option>Basel-Stadt</option>
+          <option>Bern</option>
+          <option>Freiburg</option>
+          <option>Genève</option>
+          <option>Glarus</option>
+          <option>Graubünden</option>
+          <option>Jura</option>
+          <option>Luzern</option>
+          <option>Neuchâtel</option>
+          <option>Nidwalden</option>
+          <option>Obwalden</option>
+          <option>Schaffhausen</option>
+          <option>Schwyz</option>
+          <option>Solothurn</option>
+          <option>St. Gallen</option>
+          <option>Thurgau</option>
+          <option>Ticino</option>
+          <option>Uri</option>
+          <option>Valais</option>
+          <option>Vaud</option>
+          <option>Zug</option>
+          <option>Zürich</option>
+        </select>
+        <label for="add-website" data-i18n="addWebsite">Website</label>
+        <input id="add-website" name="website" type="url" placeholder="https://" autocomplete="url" />
+        <label for="add-description" data-i18n="addDescription">Description</label>
+        <textarea id="add-description" name="description" rows="3" maxlength="1000"></textarea>
+        <p class="auth-error" role="alert" hidden></p>
+        <div class="auth-actions">
+          <button type="button" class="ghost" data-close data-i18n="authCancel">Cancel</button>
+          <button type="submit" class="primary" data-i18n="addSubmit">Submit</button>
+        </div>
+      </form>
+    </dialog>
+    <div id="pick-hint" class="pick-hint" role="status" hidden data-i18n="addPickHint">Tap the map to place the market (Esc to cancel)</div>
   </body>
 </html>
