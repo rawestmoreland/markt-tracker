@@ -26,6 +26,7 @@
       crossorigin=""
     ></script>
     <script src="i18n.js"></script>
+    <script type="text/javascript" src="auth.js" defer></script>
     <script type="text/javascript" src="app.js" defer></script>
     <title>Markt Tracker 🎄</title>
   </head>
@@ -36,9 +37,12 @@
     <aside id="panel">
       <div id="grab" class="grab" aria-hidden="true"><span></span></div>
       <header class="hero">
-        <div class="lang" role="group" data-i18n-attr="aria-label:languageLabel" aria-label="Language">
-          <button type="button" data-lang="en">EN</button>
-          <button type="button" data-lang="de">DE</button>
+        <div class="topbar">
+          <button type="button" id="account" class="account"></button>
+          <div class="lang" role="group" data-i18n-attr="aria-label:languageLabel" aria-label="Language">
+            <button type="button" data-lang="en">EN</button>
+            <button type="button" data-lang="de">DE</button>
+          </div>
         </div>
         <h1>Markt <em>Tracker</em></h1>
         <p class="tagline" data-i18n="tagline">
@@ -63,5 +67,31 @@
     </aside>
 
     <button id="toggle" data-i18n="toggleList" data-i18n-attr="aria-label:toggleLabel" aria-label="Show or hide the list">🎅 List</button>
+
+    <dialog id="auth" aria-labelledby="auth-title">
+      <form id="auth-email" method="dialog" novalidate>
+        <h2 id="auth-title" data-i18n="authTitle">Sign in or sign up</h2>
+        <p data-i18n="authIntro">Enter your email and we'll send you a one-time code. No password needed.</p>
+        <label for="auth-email-input" data-i18n="authEmail">Email</label>
+        <input id="auth-email-input" type="email" required autocomplete="email" inputmode="email" />
+        <p class="auth-error" role="alert" hidden></p>
+        <div class="auth-actions">
+          <button type="button" class="ghost" data-close data-i18n="authCancel">Cancel</button>
+          <button type="submit" class="primary" data-i18n="authSend">Send code</button>
+        </div>
+      </form>
+      <form id="auth-code" method="dialog" novalidate hidden>
+        <h2 data-i18n="authCodeTitle">Check your inbox</h2>
+        <p><span data-i18n="authCodeIntro">We sent a code to</span> <b id="auth-sent-to"></b></p>
+        <label for="auth-code-input" data-i18n="authCode">Code</label>
+        <input id="auth-code-input" type="text" required autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" />
+        <p class="auth-error" role="alert" hidden></p>
+        <div class="auth-actions">
+          <button type="button" class="ghost" id="auth-back" data-i18n="authBack">Back</button>
+          <button type="submit" class="primary" data-i18n="authVerify">Verify</button>
+        </div>
+        <button type="button" class="link" id="auth-resend" data-i18n="authResend">Send a new code</button>
+      </form>
+    </dialog>
   </body>
 </html>
